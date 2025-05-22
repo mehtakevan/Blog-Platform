@@ -1,0 +1,39 @@
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+const userService = require("../services/userServices");
+
+dotenv.config();
+
+const protect = async (req, res, next) => {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
+
+      // Decode token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      const user = await userService.findByEmail(decoded.email);
+      if (!user) {
+        const err = new Error("User not found");
+        err.statusCode = 404;
+        return next(err);
+      }
+
+      req.user = user;
+      next();
+    } catch (error) {
+      error.statusCode = 401;
+      return next(error);
+    }
+  } else {
+    const error = new Error("Not authorized, no token");
+    error.statusCode = 401;
+    return next(error);
+  }
+};
+
+module.exports = { protect };

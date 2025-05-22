@@ -1,5 +1,3 @@
-// controllers/userController.js
-const bcrypt = require('bcrypt');
 const userServices = require('../services/userServices');
 const generateToken = require('../utils/generateToken');
 const { hashValue, compareValue } = require('../utils/hash');
@@ -27,7 +25,7 @@ const login = async (req, res, next) => {
     const match = await compareValue(password, user.password);
     if (!match) return res.status(401).json({ message: 'Invalid credentials' });
 
-    const token = generateToken(user.id);
+    const token = generateToken(user.email);
     res.json({ token });
   } catch (err) {
     next(err);

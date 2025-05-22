@@ -3,8 +3,8 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (email) => {
+  return jwt.sign({ email }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
 };
