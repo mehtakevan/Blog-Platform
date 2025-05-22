@@ -1,3 +1,19 @@
+/**
+ * Post Services
+ * -------------
+ * Contains database logic related to blog post operations.
+ * 
+ * Functions:
+ * - createPost(title, content, userId, tagIds): Creates a new post and links tags.
+ * - getAllPosts(): Retrieves all posts with associated user and tag data.
+ * - getPostById(id): Fetches a specific post by ID with tags and author.
+ * - updatePost(postId, title, content, tagIds): Updates post fields and its tag associations.
+ * - deletePost(id): Deletes a post and its related tags from the database.
+ * 
+ * Uses:
+ * - MySQL transactions to ensure atomic updates to post and tag relationships.
+ */
+
 const db = require('../config/db');
 
 const createPost = async (title, content, userId, tagIds) => {
@@ -7,8 +23,9 @@ const createPost = async (title, content, userId, tagIds) => {
   );
   const postId = result.insertId;
 
-  for (const tagId of tagIds) {
-    await db.execute('INSERT INTO post_tags (post_id, tag_id) VALUES (?, ?)', [postId, tagId]);
+  if (tagIds.length > 0) {
+    const values = tagIds.map(tagId => [postId, tagId]);
+    await db.query('INSERT INTO post_tags (post_id, tag_id) VALUES ?', [values]);
   }
 
   return postId;
@@ -30,7 +47,7 @@ const getAllPosts = async () => {
 const getPostById = async (id) => {
   const [rows] = await db.query(`
     SELECT p.id, p.title, p.content, u.username,
-           GROUP_CONCAT(t.name) as tags
+    GROUP_CONCAT(t.name) as tags
     FROM posts p
     JOIN users u ON p.user_id = u.id
     LEFT JOIN post_tags pt ON p.id = pt.post_id
@@ -47,7 +64,6 @@ const updatePost = async (postId, title, content, tagIds) => {
   try {
     await connection.beginTransaction();
 
-    // Step 1: Dynamically update title/content if provided
     if (title || content) {
       let fields = [];
       let values = [];
@@ -67,9 +83,8 @@ const updatePost = async (postId, title, content, tagIds) => {
       await connection.query(updateQuery, values);
     }
 
-    // Step 2: If tags are provided, update post_tags
     if (tagIds) {
-      // Delete old tags
+
       await connection.query(`DELETE FROM post_tags WHERE post_id = ?`, [postId]);
 
       if (tagIds.length > 0) {

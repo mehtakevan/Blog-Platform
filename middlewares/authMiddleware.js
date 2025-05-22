@@ -1,3 +1,19 @@
+/**
+ * Authentication Middleware - protect
+ * ------------------------------------
+ * Verifies JWT from the Authorization header (Bearer token).
+ * 
+ * - Decodes token using JWT_SECRET from environment variables.
+ * - Fetches user by email embedded in the token.
+ * - Attaches user object to the request (`req.user`) for downstream access.
+ * 
+ * Responses:
+ * - 401 Unauthorized: If token is missing, invalid, or expired.
+ * - 404 Not Found: If decoded user does not exist in the database.
+ * 
+ * Forwards errors to the centralized error handler.
+ */
+
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const userService = require("../services/userServices");

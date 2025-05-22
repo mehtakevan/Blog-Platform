@@ -1,3 +1,19 @@
+/**
+ * User Controller
+ * ----------------
+ * Handles user registration and login operations.
+ * Uses userServices for database interaction, and utility functions for hashing and token generation.
+ * 
+ * Exports:
+ * - register: Registers a new user after checking for existing email and hashing the password.
+ *   - Response: 201 Created with userId, or 409 Conflict if email exists.
+ * 
+ * - login: Authenticates user by comparing hashed password and generates JWT token.
+ *   - Response: 200 OK with token, or 401 Unauthorized for invalid credentials.
+ * 
+ * All errors are forwarded to the global error handler middleware.
+ */
+
 const userServices = require('../services/userServices');
 const generateToken = require('../utils/generateToken');
 const { hashValue, compareValue } = require('../utils/hash');

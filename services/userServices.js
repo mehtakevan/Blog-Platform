@@ -1,3 +1,16 @@
+/**
+ * User Services
+ * -------------
+ * Handles database operations related to user accounts.
+ * 
+ * Functions:
+ * - createUser(username, email, hashedPassword): Inserts a new user into the database.
+ * - findByEmail(email): Retrieves a user record by email.
+ * 
+ * Uses:
+ * - MySQL queries for interacting with the 'users' table.
+ */
+
 const db = require('../config/db');
 
 const createUser = async (username, email, hashedPassword) => {
