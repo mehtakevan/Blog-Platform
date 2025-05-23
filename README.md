@@ -1,6 +1,6 @@
 # Blog-Platform
 
-A simple blog platform backend built with Node.js, Express, and MySQL. This project provides RESTful APIs to manage users, posts, and tags with authentication and authorization features.
+A simple blog platform backend built with Node.js, Express, and MySQL. This project provides RESTful APIs to manage users, posts, and tags with authentication feature.
 
 ---
 
